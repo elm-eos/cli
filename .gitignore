@@ -1,0 +1,12 @@
+node_modules
+package-lock.json
+yarn.lock
+./dist
+./build
+*.log
+elm-stuff
+src/elm/index.js
+.env
+*.pem
+*.csr
+data-dir

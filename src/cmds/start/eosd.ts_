@@ -1,0 +1,43 @@
+import * as fs from 'fs';
+import * as http from 'http';
+import * as httpProxy from 'http-proxy';
+import * as https from 'https';
+import * as path from 'path';
+import * as util from './util';
+
+export const command = 'testrpc';
+
+export const describe = 'Starts a TestRPC server';
+
+export const builder = {};
+
+export async function handler() {
+    return Promise.all([
+        startTestRpc(),
+        startProxyServer(),
+    ]);
+}
+
+const testRpcPort = 8545;
+
+async function startTestRpc() {
+    const networkId = 50;
+    const db = path.join(process.cwd(), '0x_testrpc_snapshot');
+    const mnemonic = 'concert load couple harbor equip island argue ramp clarify fence smart topic';
+    // const privateKey = "0x4a6b28ac5ebcf272d45636a5f7fbdf9e996c7274e3b2151b3e4d883f9eb1ef12";
+    // const account = `${privateKey},10000`;
+    await util.exec(command, `testrpc --networkId ${networkId} -p ${testRpcPort} --db ${db} -m "${mnemonic}"`);
+}
+
+function startProxyServer() {
+    httpProxy.createProxyServer({
+        target: {
+            host: 'localhost',
+            port: testRpcPort,
+        },
+        ssl: {
+            key: fs.readFileSync(path.join(process.cwd(), 'client-key.pem'), 'utf-8'),
+            cert: fs.readFileSync(path.join(process.cwd(), 'client-cert.pem'), 'utf-8'),
+        },
+    }).listen(3000);
+}

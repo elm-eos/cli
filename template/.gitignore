@@ -1,0 +1,11 @@
+node_modules
+package-lock.json
+./dist
+./build
+*.log
+elm-stuff
+src/elm/index.js
+.env
+*.pem
+*.csr
+data-dir
